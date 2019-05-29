@@ -5,12 +5,15 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  firstName: string;
+  @Column({ nullable: false, unique: true })
+  email: string;
 
-  @Column()
-  lastName: string;
+  @Column({ nullable: false, unique: true })
+  username: string;
 
-  @Column()
-  age: number;
+  @Column({ type: 'text', nullable: false })
+  password: string;
+
+  @Column({ nullable: true })
+  avatar: string;
 }

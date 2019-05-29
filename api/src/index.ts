@@ -2,10 +2,11 @@ require('dotenv').config();
 import 'reflect-metadata';
 import 'module-alias/register';
 
-import { resolve } from '~/utils';
 import express from 'express';
+import bodyParser from 'body-parser';
 import { createConnection } from 'typeorm';
 
+import { resolve } from '~/utils';
 import routes from '~/routes';
 
 (async () => {
@@ -17,6 +18,7 @@ import routes from '~/routes';
   }
 
   const app = express();
+  app.use(bodyParser.json());
   app.use(routes);
 
   const port = process.env.PORT || 3001;
