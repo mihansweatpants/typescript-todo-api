@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-import { User } from '~/db/entity/User';
+import { getUserRepository } from '~/db/entity/User';
 import { resolve } from '~/utils';
 
 const TOKEN_LIFETIME = 1000 * 60 * 60 * 24;
@@ -32,7 +32,7 @@ export async function checkAuth(req: Request, res: Response, next: NextFunction)
   }
 
   const { id } = verifyToken(token);
-  const [err, user] = await resolve(User.findOne({ id: +id }));
+  const [err, user] = await resolve(getUserRepository().findOne({ id: +id }));
 
   if (err || !user) {
     next(new Error('Invalid token'));

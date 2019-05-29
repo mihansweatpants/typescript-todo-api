@@ -1,8 +1,13 @@
 import { resolve } from '~/utils';
-import { User } from '~/db/entity/User';
+import { getUserRepository } from '~/db/entity/User';
+import bcrypt from 'bcryptjs';
 
-export async function createUser(data: any) {
-  const [err, user] = await resolve<User>(User.save(data));
+import { User } from './types';
+
+export async function createUser({ password, ...rest }: User) {
+  const [err, user] = await resolve(
+    getUserRepository().save({ ...rest, password: await bcrypt.hash(password, 10) }),
+  );
 
   if (err != null) {
     throw new Error(`Failed to create user: \n${err}`);

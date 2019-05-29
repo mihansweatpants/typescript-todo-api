@@ -9,6 +9,7 @@ export async function create(req: Request, res: Response) {
   if (err != null) {
     res.status(500).json({ error: err.message });
   } else {
-    res.status(201).json({ ...user });
+    delete user!.password;
+    res.status(201).json();
   }
 }
