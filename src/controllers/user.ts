@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { resolve } from '~/utils';
-import { getUserFromRequest } from '~/auth';
+
 import * as users from '~/modules/users';
 
 export async function create(req: Request, res: Response) {
@@ -25,13 +25,9 @@ export async function auth(req: Request, res: Response) {
 }
 
 export async function me(req: Request, res: Response) {
-  const [err, user] = await resolve(getUserFromRequest(req));
+  const user = req.context.user;
 
-  if (err != null) {
-    res.json({ error: err.message });
-  } else {
-    res.status(200).json({ data: user });
-  }
+  res.status(200).json({ data: user });
 }
 
 export async function getOne(req: Request, res: Response) {

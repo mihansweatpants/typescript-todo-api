@@ -16,5 +16,6 @@
     "strictNullChecks": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-  }
+    "typeRoots": ["./src/types"]
+  },
 }

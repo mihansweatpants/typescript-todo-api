@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-import { getUserRepository } from '~/db/entity/User';
+import { getUser } from '~/modules/users';
 import { resolve } from '~/utils';
 
 const TOKEN_LIFETIME = 1000 * 60 * 60 * 24;
@@ -20,23 +20,35 @@ export function generateToken(payload: TokenPayload) {
   );
 }
 
-function verifyToken(token: string): TokenPayload {
+function verifyToken(token: string) {
   return <TokenPayload>jwt.verify(token, process.env.JWT_SECRET!);
 }
 
+function getToken(request: Request): string | null {
+  const { authorization } = request.headers;
+  if (authorization == null) {
+    return null;
+  }
+
+  const [, token] = authorization.split(' ');
+
+  return token;
+}
+
 export async function checkAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies.token || req.headers.authorization;
+  const token = getToken(req);
 
-  if (!token) {
-    next(new Error('Must Authenticate'));
+  if (token == null) {
+    res.status(401).json({ error: 'Must authenticate' });
+  } else {
+    const { id } = verifyToken(token);
+    const [err, user] = await resolve(getUser({ id: +id }));
+
+    if (err || !user) {
+      res.status(401).json({ error: 'Invalid token' });
+    }
+
+    req.context = { user: user! };
+    next();
   }
-
-  const { id } = verifyToken(token);
-  const [err, user] = await resolve(getUserRepository().findOne({ id: +id }));
-
-  if (err || !user) {
-    next(new Error('Invalid token'));
-  }
-
-  return user;
 }
