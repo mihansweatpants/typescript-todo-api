@@ -1,15 +1,51 @@
 import { Request, Response } from 'express';
 
 import { resolve } from '~/utils';
-import { createUser } from '~/modules/users';
+import { getUserFromRequest } from '~/auth';
+import * as users from '~/modules/users';
 
 export async function create(req: Request, res: Response) {
-  const [err, user] = await resolve(createUser(req.body));
+  const [err] = await resolve(users.createUser(req.body));
 
   if (err != null) {
     res.status(500).json({ error: err.message });
   } else {
-    delete user!.password;
-    res.status(201).json();
+    res.status(201).json({ data: {} });
+  }
+}
+
+export async function auth(req: Request, res: Response) {
+  const [err, token] = await resolve(users.authenticateUser(req.body));
+
+  if (err != null) {
+    res.status(401).json({ error: err.message });
+  } else {
+    res.status(200).json({ data: { token } });
+  }
+}
+
+export async function me(req: Request, res: Response) {
+  const [err, user] = await resolve(getUserFromRequest(req));
+
+  if (err != null) {
+    res.json({ error: err.message });
+  } else {
+    res.status(200).json({ data: user });
+  }
+}
+
+export async function getOne(req: Request, res: Response) {
+  const { id } = req.params;
+
+  if (id == null) {
+    res.status(400).json({ error: 'id parameter must be specified' });
+  }
+
+  const [err, user] = await resolve(users.getUser({ id }));
+
+  if (err != null) {
+    res.json({ err: err.message });
+  } else {
+    res.status(200).json({ data: user });
   }
 }

@@ -5,3 +5,12 @@ export interface User {
   password: string;
   avatar: string | null;
 }
+
+export interface AuthRequest {
+  email: string;
+  password: string;
+}
+
+export interface GetUserRequest {
+  id: number;
+}

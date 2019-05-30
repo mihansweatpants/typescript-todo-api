@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-import { User } from '~/db/entity/User';
+import { getUser } from '~/modules/users';
 import { resolve } from '~/utils';
 
 const TOKEN_LIFETIME = 1000 * 60 * 60 * 24;
@@ -20,19 +20,31 @@ export function generateToken(payload: TokenPayload) {
   );
 }
 
+function verifyToken(token: string) {
+  return <TokenPayload>jwt.verify(token, process.env.JWT_SECRET!);
+}
+
 export async function checkAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies.token || req.headers.authorization;
+  const token = req.headers.authorization!;
 
   if (!token) {
-    next(new Error('Must Authenticate'));
+    res.status(401).json({ error: 'Must authenticate' });
+  } else {
+    const { id } = verifyToken(token);
+    const [err, user] = await resolve(getUser({ id: +id }));
+
+    if (err || !user) {
+      res.status(401).json({ error: 'Invalid token' });
+    }
+
+    next();
   }
+}
 
-  const { id } = <TokenPayload>jwt.verify(token, process.env.JWT_SECRET!);
-  const [err, user] = await resolve(User.getRepository().findOne({ id: +id }));
+export async function getUserFromRequest(req: Request) {
+  const token = req.headers.authorization!;
 
-  if (err || !user) {
-    next(new Error('Invalid token'));
-  }
+  const { id } = verifyToken(token);
 
-  req;
+  return await getUser({ id: +id });
 }
