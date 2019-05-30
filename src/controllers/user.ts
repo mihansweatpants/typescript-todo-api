@@ -4,13 +4,13 @@ import { resolve } from '~/utils';
 
 import * as users from '~/modules/users';
 
-export async function create(req: Request, res: Response) {
-  const [err] = await resolve(users.createUser(req.body));
+export async function signup(req: Request, res: Response) {
+  const [err, token] = await resolve(users.createUser(req.body));
 
   if (err != null) {
     res.status(500).json({ error: err.message });
   } else {
-    res.status(201).json({ data: {} });
+    res.status(201).json({ data: { token } });
   }
 }
 
@@ -41,6 +41,20 @@ export async function getOne(req: Request, res: Response) {
 
   if (err != null) {
     res.json({ err: err.message });
+  } else {
+    res.status(200).json({ data: user });
+  }
+}
+
+export async function update(req: Request, res: Response) {
+  if (req.context.user.id !== req.body.id) {
+    res.status(403).json({ error: 'Can\'t modify resource' });
+  }
+
+  const [err, user] = await resolve(users.updateUser(req.body));
+
+  if (err != null) {
+    res.status(500).json({ error: err.message });
   } else {
     res.status(200).json({ data: user });
   }

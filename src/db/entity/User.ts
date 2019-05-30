@@ -9,9 +9,15 @@ export const UserEntity = new EntitySchema<User>({
       primary: true,
       generated: true,
     },
+    email: {
+      type: String,
+      nullable: false,
+      unique: true,
+    },
     username: {
       type: String,
       nullable: false,
+      unique: true,
     },
     password: {
       type: String,
@@ -25,21 +31,3 @@ export const UserEntity = new EntitySchema<User>({
 });
 
 export const getUserRepository = () => getRepository(UserEntity);
-
-// @Entity('users')
-// export class User extends BaseEntity {
-//   @PrimaryGeneratedColumn()
-//   id: number;
-
-//   @Column({ nullable: false, unique: true })
-//   email: string;
-
-//   @Column({ nullable: false, unique: true })
-//   username: string;
-
-//   @Column({ type: 'text', nullable: false })
-//   password: string;
-
-//   @Column({ nullable: true })
-//   avatar: string;
-// }

@@ -14,7 +14,7 @@ export async function createUser({ password, ...rest }: User) {
     throw new Error(`Failed to create user: \n${err}`);
   }
 
-  return user;
+  return generateToken({ id: String(user!.id) });
 }
 
 export async function authenticateUser({ email, password }: AuthRequest): Promise<string> {
@@ -40,4 +40,20 @@ export async function getUser({ id }: GetUserRequest) {
 
   delete user.password;
   return user;
+}
+
+export async function updateUser(user: User) {
+  const { id, password } = user;
+
+  if (password != null) {
+    user.password = await bcrypt.hash(password, 10);
+  }
+
+  const [err] = await resolve(getUserRepository().update({ id }, user));
+
+  if (err != null) {
+    throw new Error(`Could not update user: ${err}`);
+  }
+
+  return getUser({ id });
 }
