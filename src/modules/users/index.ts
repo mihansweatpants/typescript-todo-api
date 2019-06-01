@@ -3,7 +3,7 @@ import { getUserRepository } from '~/db/entity/User';
 import bcrypt from 'bcryptjs';
 
 import { User, AuthParams, GetUserParams, UserPublic } from './types';
-import { generateToken } from '../auth';
+import { generateToken } from '~/modules/auth';
 
 export async function createUser({ password, ...rest }: User): Promise<string> {
   const [err, user] = await resolve(

@@ -1,4 +1,5 @@
 import { Omit } from '~/utils/types';
+import { Todo } from '~/modules/todos/types';
 
 export interface User {
   id: number;
@@ -6,6 +7,7 @@ export interface User {
   username: string;
   password: string;
   avatar: string;
+  todos?: Todo[];
 }
 
 export type UserPublic = Omit<User, 'password'>;

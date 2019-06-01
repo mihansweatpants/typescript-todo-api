@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, getRepository } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, getRepository, OneToMany } from 'typeorm';
 import { User } from '~/modules/users/types';
+import { Todo } from '~/modules/todos/types';
+import { TodoEntity } from './Todo';
 
 @Entity({ name: 'users' })
 export class UserEntity implements User {
@@ -17,6 +19,9 @@ export class UserEntity implements User {
 
   @Column({ nullable: true })
   avatar: string;
+
+  @OneToMany(type => TodoEntity, todo => todo.user)
+  todos: Todo[];
 }
 
 export const getUserRepository = () => getRepository(UserEntity);
