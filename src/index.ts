@@ -10,12 +10,14 @@ import { resolve } from '~/utils';
 import routes from '~/routes';
 
 (async () => {
-  const [err] = await resolve(createConnection());
+  const [err, connection] = await resolve(createConnection());
 
   if (err != null) {
     console.log(`Unable to connect to db: \n${err}`);
     process.exit(1);
   }
+
+  await connection!.runMigrations();
 
   const app = express();
   app.use(bodyParser.json());

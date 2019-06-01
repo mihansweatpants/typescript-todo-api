@@ -38,6 +38,8 @@ export async function getUser({ id }: GetUserParams): Promise<UserPublic> {
     throw new Error('User not found');
   }
 
+  // Dont like this
+  delete user.password;
   return user;
 }
 
