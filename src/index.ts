@@ -19,7 +19,7 @@ import routes from '~/routes';
 
   const app = express();
   app.use(bodyParser.json());
-  app.use(routes);
+  app.use('/api', routes);
 
   const port = process.env.PORT || 3001;
   app.listen(port, () => console.log(`api listening at http://localhost:${port}`));

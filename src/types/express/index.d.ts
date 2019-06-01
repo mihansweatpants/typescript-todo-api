@@ -1,10 +1,10 @@
-import { User } from '~/modules/users/types';
+import { UserPublic } from '~/modules/users/types';
 
 declare global {
   namespace Express {
     export interface Request {
       context: {
-        user: User;
+        user: UserPublic;
       };
     }
   }

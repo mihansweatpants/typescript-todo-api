@@ -1,33 +1,22 @@
-import { EntitySchema, getRepository } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, getRepository } from 'typeorm';
 import { User } from '~/modules/users/types';
 
-export const UserEntity = new EntitySchema<User>({
-  name: 'users',
-  columns: {
-    id: {
-      type: Number,
-      primary: true,
-      generated: true,
-    },
-    email: {
-      type: String,
-      nullable: false,
-      unique: true,
-    },
-    username: {
-      type: String,
-      nullable: false,
-      unique: true,
-    },
-    password: {
-      type: String,
-      nullable: false,
-    },
-    avatar: {
-      type: String,
-      nullable: true,
-    },
-  },
-});
+@Entity({ name: 'users' })
+export class UserEntity implements User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ nullable: false })
+  email: string;
+
+  @Column({ nullable: false })
+  username: string;
+
+  @Column({ select: false })
+  password: string;
+
+  @Column({ nullable: true })
+  avatar: string;
+}
 
 export const getUserRepository = () => getRepository(UserEntity);

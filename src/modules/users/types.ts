@@ -1,16 +1,20 @@
+import { Omit } from '~/utils/types';
+
 export interface User {
   id: number;
   email: string;
   username: string;
   password: string;
-  avatar: string | null;
+  avatar: string;
 }
 
-export interface AuthRequest {
+export type UserPublic = Omit<User, 'password'>;
+
+export interface AuthParams {
   email: string;
   password: string;
 }
 
-export interface GetUserRequest {
+export interface GetUserParams {
   id: number;
 }
