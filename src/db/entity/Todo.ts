@@ -22,13 +22,15 @@ export class TodoEntity implements Todo {
   @UpdateDateColumn()
   updated_at: string;
 
-  @Column()
-  complete: boolean;
+  @Column({ default: false })
+  is_complete: boolean;
 
   @Column()
   content: string;
 
-  @ManyToOne(type => UserEntity, user => user.todos)
+  @ManyToOne(() => UserEntity, user => user.todos, {
+    eager: true,
+  })
   user: UserPublic;
 }
 

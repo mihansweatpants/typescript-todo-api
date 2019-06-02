@@ -18,7 +18,14 @@ export async function createUser({ password, ...rest }: User): Promise<string> {
 }
 
 export async function authenticateUser({ email, password }: AuthParams): Promise<string> {
-  const [, user] = await resolve(getUserRepository().findOne({ email }));
+  const [, user] = await resolve(
+    getUserRepository()
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where({ email })
+      .getOne(),
+  );
+
   if (user == null) {
     throw new Error('User not found');
   }
@@ -38,8 +45,6 @@ export async function getUser({ id }: GetUserParams): Promise<UserPublic> {
     throw new Error('User not found');
   }
 
-  // Dont like this
-  delete user.password;
   return user;
 }
 

@@ -14,13 +14,13 @@ export class UserEntity implements User {
   @Column({ nullable: false })
   username: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @Column({ nullable: true })
   avatar: string;
 
-  @OneToMany(type => TodoEntity, todo => todo.user)
+  @OneToMany(() => TodoEntity, todo => todo.user)
   todos: Todo[];
 }
 
